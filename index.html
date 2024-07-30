@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <style>
+    .container{
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 350px;
+      text-align: center;
+      margin-top: 50px;
+      margin-left: 650px;
+    }
+    h1{
+      margin-bottom: 20px;
+    }
+    input[type="text"], textarea{
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    textarea{
+      resize: none;
+    }
+    button{
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover{
+      background-color: #218838;
+    }
+    .spacer{
+      margin-bottom: 20px;
+    }
+    ul{
+      list-style-type: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+    li{
+      background-color: #f9f9f9;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+    }
+    .task-text{
+      flex-grow: 1;
+      cursor: pointer;
+    }
+    .done-task{
+      text-decoration: line-through;
+      color: #888;
+    }
+    .task-buttons{
+      display: flex;
+      gap: 5px;
+    }
+    .task-buttons button{
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .edit-button{
+      background-color: #ffc107;
+      color: #fff;
+    }
+    .edit-button:hover{
+      background-color: #e0a800;
+    }
+    .delete-button{
+      background-color: #dc3545;
+      color: #fff;
+    }
+    .delete-button:hover{
+      background-color: #c82333;
+    }
+    .save-button{
+      background-color: #007bff;
+      color: #fff;
+    }
+    .save-button:hover{
+      background-color: #0056b3;
+    }
+    .task-details{
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f1f1f1;
+      border-radius: 4px;
+    }
+    .task-timestamp{
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f1f1f1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>To-Do List</h1>
+    <input type="text" id="taskInput" placeholder="Enter New Task">
+    <button id="addTaskButton">Add Task</button>
+    <div class="spacer"></div>
+    <input type="text" id="searchInput" placeholder="Search Tasks">
+    <ul id="taskList"></ul>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded',()=>{
+      const tasks=[];
+      const taskInput=document.getElementById('taskInput');
+      const searchInput=document.getElementById('searchInput');
+      const addTaskButton=document.getElementById('addTaskButton');
+      const taskList=document.getElementById('taskList');
+      const renderTasks=()=>{
+        taskList.innerHTML='';
+        const filteredTasks=tasks.filter(task=>task.text.toLowerCase().includes(searchInput.value.toLowerCase()));
+        filteredTasks.forEach((task,index)=>{
+          const taskItem=document.createElement('li');
+
+          const taskCheckbox=document.createElement('input');
+          taskCheckbox.type='checkbox';
+          taskCheckbox.checked=task.isDone;
+          taskCheckbox.addEventListener('change',()=>{
+            task.isDone=!task.isDone;
+            renderTasks();
+          });
+          taskItem.appendChild(taskCheckbox);
+          if(task.isEditing){
+            const taskInput=document.createElement('input');
+            taskInput.type='text';
+            taskInput.value=task.text;
+            taskInput.addEventListener('input',(e)=>{
+              task.text=e.target.value;
+            });
+            const taskDescription=document.createElement('textarea');
+            taskDescription.value=task.description;
+            taskDescription.placeholder='Enter description';
+            taskDescription.addEventListener('input',(e)=>{
+              task.description=e.target.value;
+            });
+            const saveButton=document.createElement('button');
+            saveButton.className='save-button';
+            saveButton.textContent='Save';
+            saveButton.addEventListener('click',()=>{
+              task.isEditing=false;
+              task.timestamp=new Date().toLocaleString();
+              renderTasks();
+            });
+            taskItem.appendChild(taskInput);
+            taskItem.appendChild(taskDescription);
+            taskItem.appendChild(saveButton);
+            } else {
+            const taskText=document.createElement('span');
+            taskText.className=task.isDone ? 'task-text done-task' : 'task-text';
+            taskText.textContent=task.text;
+            taskText.addEventListener('click',()=>{
+              task.isExpanded=!task.isExpanded;
+              renderTasks();
+            });
+            const editButton=document.createElement('button');
+            editButton.className='edit-button';
+            editButton.textContent='Edit';
+            editButton.addEventListener('click',()=>{
+              task.isEditing=true;
+              renderTasks();
+            });
+            const deleteButton=document.createElement('button');
+            deleteButton.className='delete-button';
+            deleteButton.textContent='Delete';
+            deleteButton.addEventListener('click',()=>{
+              tasks.splice(index,1);
+              renderTasks();
+            });
+            taskItem.appendChild(taskText);
+            taskItem.appendChild(editButton);
+            taskItem.appendChild(deleteButton);
+            if (task.isExpanded) {
+              const taskDetails=document.createElement('div');
+              taskDetails.className='task-details';
+              const taskDescription=document.createElement('p');
+              taskDescription.textContent=task.description;
+              const taskTimestamp=document.createElement('p');
+              taskTimestamp.textContent=`Last updated:${task.timestamp}`;
+              taskDetails.appendChild(taskDescription);
+              taskDetails.appendChild(taskTimestamp);
+              taskItem.appendChild(taskDetails);
+            }
+            const taskTimestamp=document.createElement('div');
+            taskTimestamp.className='task-timestamp';
+            taskTimestamp.textContent=`Created on: ${task.timestamp}`;
+            taskItem.appendChild(taskTimestamp);
+          }
+          taskList.appendChild(taskItem);
+        });
+      };
+      addTaskButton.addEventListener('click',()=>{
+        if (taskInput.value.trim()){
+          tasks.push({
+            text:taskInput.value.trim(),
+            isDone:false,
+            isEditing:false,
+            description:'',
+            timestamp:new Date().toLocaleString(),
+            isExpanded:false
+          });
+          taskInput.value='';
+          renderTasks();
+        }
+      });
+      taskInput.addEventListener('keypress',(e)=>{
+        if(e.key==='Enter'){
+          addTaskButton.click();
+        }
+      });
+      searchInput.addEventListener('input',renderTasks);
+    });
+  </script>
+</body>
+</html>
