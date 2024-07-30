@@ -29,10 +29,10 @@
 - **Event Handling**:
   - Listens for user interactions such as clicking buttons or typing in input fields and performs appropriate actions (e.g., Adding a Task, Updating a Task, Searching Tasks).
 
-Add Tasks:Type a task into the input field and click the "Add Task" button or press Enter.
-Edit Tasks:Click the "Edit" button next to a task to modify its text or description.
-Delete Tasks:Click the "Delete" button next to a task to remove it.
-Mark as Completed:Check the checkbox next to a task to mark it as done.
-Search Tasks:Use the search input field to filter tasks based on their text.
+- Add Tasks:Type a task into the input field and click the "Add Task" button or press Enter.
+- Edit Tasks:Click the "Edit" button next to a task to modify its text or description.
+- Delete Tasks:Click the "Delete" button next to a task to remove it.
+- Mark as Completed:Check the checkbox next to a task to mark it as done.
+- Search Tasks:Use the search input field to filter tasks based on their text.
 
 ![Screenshot 2024-07-30 221955](https://github.com/user-attachments/assets/502fe010-402c-4331-bdc2-d3cfacbd3ed7)
